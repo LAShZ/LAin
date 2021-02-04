@@ -18,6 +18,17 @@ func main() {
 		c.String(200, "Hello %s, you're at %s\n", c.Query("name"), c.Path)
 	})
 
+	r.GET("/hello/:name", func(c *lawf.Context) {
+		// expect /hello/Lavch
+		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
+	})
+
+	r.GET("/assets/*filepath", func(c *lawf.Context) {
+		c.JSON(http.StatusOK, lawf.Head{
+			"filepath": c.Param("filepath"),
+		})
+	})
+
 	r.POST("/login", func(c *lawf.Context) {
 		c.JSON(http.StatusOK, lawf.Head{
 			"username": c.PostForm("username"),
