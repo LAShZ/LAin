@@ -10,10 +10,10 @@ type Head map[string]interface{}
 
 type Context struct {
 	// origin objects
-	W http.ResponseWriter
+	W   http.ResponseWriter
 	Req *http.Request
 	// request info
-	Path string
+	Path   string
 	Method string
 	Params map[string]string
 	// response info
@@ -22,9 +22,9 @@ type Context struct {
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
 	return &Context{
-		W: w,
-		Req: req,
-		Path: req.URL.Path,
+		W:      w,
+		Req:    req,
+		Path:   req.URL.Path,
 		Method: req.Method,
 	}
 }
@@ -76,4 +76,3 @@ func (c *Context) HTML(code int, html string) {
 	c.Status(code)
 	c.W.Write([]byte(html))
 }
-

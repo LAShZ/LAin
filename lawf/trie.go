@@ -3,10 +3,10 @@ package lawf
 import "strings"
 
 type node struct {
-	path string	// path is the route waiting to match e.g. /p/:lang
-	part string	// part is part of the path
-	children []*node	// children is the child node
-	isWild	bool	// isWild represent whether wildcard
+	path     string  // path is the route waiting to match e.g. /p/:lang
+	part     string  // part is part of the path
+	children []*node // children is the child node
+	isWild   bool    // isWild represent whether wildcard
 }
 
 // matchChild returns the first matched node
@@ -40,7 +40,7 @@ func (n *node) insert(path string, parts []string, height int) {
 	child := n.matchChild(part)
 	if child == nil {
 		child = &node{
-			part: part,
+			part:   part,
 			isWild: part[0] == ':' || part[0] == '*',
 		}
 		n.children = append(n.children, child)

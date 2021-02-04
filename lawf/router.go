@@ -5,14 +5,14 @@ import (
 )
 
 type router struct {
-	roots	map[string]*node	// e.g. roots["GET"], roots["POST"]
-	handlers map[string]HandlerFunc	// e.g. handlers["GET-/p/:lang/doc"], handlers["POST-/p/book"]
+	roots    map[string]*node       // e.g. roots["GET"], roots["POST"]
+	handlers map[string]HandlerFunc // e.g. handlers["GET-/p/:lang/doc"], handlers["POST-/p/book"]
 }
 
 func newRouter() *router {
 	return &router{
-		roots:		make(map[string]*node),
-		handlers:	make(map[string]HandlerFunc),
+		roots:    make(map[string]*node),
+		handlers: make(map[string]HandlerFunc),
 	}
 }
 
