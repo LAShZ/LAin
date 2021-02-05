@@ -9,11 +9,35 @@ type HandlerFunc func(*Context)
 
 // Engine implement the interface of ServeHTTP
 type Engine struct {
+	*RouterGroup
 	router *router
+	groups []*RouterGroup // store all groups
+}
+
+type RouterGroup struct {
+	prefix      string
+	middlewares []HandlerFunc // middlewares of the group
+	parent      *RouterGroup  //parent of current group
+	engine      *Engine       // engine of the webframework
 }
 
 func New() *Engine {
-	return &Engine{newRouter()}
+	engine := &Engine{router: newRouter()}
+	engine.RouterGroup = &RouterGroup{engine: engine}
+	engine.groups = []*RouterGroup{engine.RouterGroup}
+	return engine
+}
+
+// Group creates a new Group remember all groups with the same engine
+func (group *RouterGroup) Group(prefix string) *RouterGroup {
+	engine := group.engine
+	newGroup := &RouterGroup{
+		prefix: group.prefix + prefix,
+		parent: group,
+		engine: engine,
+	}
+	engine.groups = append(engine.groups, newGroup)
+	return newGroup
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -21,18 +45,18 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	engine.router.handle(c)
 }
 
-func (engine *Engine) addRoute(method string, path string, handler HandlerFunc) {
-	engine.router.addRoute(method, path, handler)
+func (group *RouterGroup) addRoute(method string, path string, handler HandlerFunc) {
+	group.engine.router.addRoute(method, path, handler)
 }
 
 // GET defines the method to add "GET" request
-func (engine *Engine) GET(path string, handler HandlerFunc) {
-	engine.addRoute("GET", path, handler)
+func (group *RouterGroup) GET(path string, handler HandlerFunc) {
+	group.engine.addRoute("GET", path, handler)
 }
 
 // POST defines the method to add "POST" request
-func (engine *Engine) POST(path string, handler HandlerFunc) {
-	engine.addRoute("POST", path, handler)
+func (group *RouterGroup) POST(path string, handler HandlerFunc) {
+	group.addRoute("POST", path, handler)
 }
 
 //  Run defines the method to start a http server
