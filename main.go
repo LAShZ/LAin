@@ -3,12 +3,23 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"lawf"
 )
 
+func v2Middlewares() lawf.HandlerFunc {
+	return func(c *lawf.Context) {
+		t := time.Now()
+		c.Fail(500, "Internal Server Error")
+		log.Printf("[%d] %s in %v for group v2", c.StatusCode, c.Req.RequestURI, time.Since(t))
+	}
+}
+
 func main() {
 	r := lawf.New()
+	r.Use(lawf.Logger())
+
 	r.GET("/", func(c *lawf.Context) {
 		c.HTML(http.StatusOK, "<h1>Index Page</h1>")
 	})
@@ -48,6 +59,7 @@ func main() {
 	}
 
 	v2 := r.Group("/v2")
+	v2.Use(v2Middlewares())
 	{
 		v2.GET("hello/:name", func(c *lawf.Context) {
 			c.String(http.StatusOK, "hello %s, you're at v2: %s\n", c.Param("name"), c.Path)
