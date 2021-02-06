@@ -1,6 +1,7 @@
 package lawf
 
 import (
+	"log"
 	"net/http"
 	"strings"
 )
@@ -54,12 +55,14 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (group *RouterGroup) addRoute(method string, path string, handler HandlerFunc) {
-	group.engine.router.addRoute(method, path, handler)
+	pattern := group.prefix + path
+	log.Printf("Route %4s - %s", method, pattern)
+	group.engine.router.addRoute(method, pattern, handler)
 }
 
 // GET defines the method to add "GET" request
 func (group *RouterGroup) GET(path string, handler HandlerFunc) {
-	group.engine.addRoute("GET", path, handler)
+	group.addRoute("GET", path, handler)
 }
 
 // POST defines the method to add "POST" request
