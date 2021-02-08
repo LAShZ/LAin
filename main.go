@@ -30,7 +30,7 @@ func v2Middlewares() lawf.HandlerFunc {
 
 func main() {
 	r := lawf.New()
-	r.Use(lawf.Logger())
+	r.Use(lawf.Logger(), lawf.Recovery())
 	r.SetFuncMap(template.FuncMap{
 		"FormatAsDate": FormatAsDate,
 	})
@@ -54,6 +54,10 @@ func main() {
 			"title": "lawf",
 			"now":   time.Date(2021, 2, 7, 0, 0, 0, 0, time.UTC),
 		})
+	})
+	r.GET("/panic", func(c *lawf.Context) {
+		names := []string{"Lavch"}
+		c.String(http.StatusOK, names[100])
 	})
 
 	r.GET("/hello", func(c *lawf.Context) {

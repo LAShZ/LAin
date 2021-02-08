@@ -44,7 +44,6 @@ func (engine *Engine) LoadHTMLGlob(path string) {
 // Group creates a new Group remember all groups with the same engine
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := group.engine
-	engine.RouterGroup.prefix = group.prefix + prefix
 	newGroup := &RouterGroup{
 		prefix: group.prefix + prefix,
 		engine: engine,
